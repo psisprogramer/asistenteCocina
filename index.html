@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Asistente Inteligente de Cocina - MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="estaticos/styles.css" />
+</head>
+<body>
+  <!-- Onboarding inicial -->
+  <div class="modal-backdrop" id="onboarding-modal">
+    <div class="modal">
+      <h2>Bienvenido/a al Asistente de Cocina</h2>
+      <p>Configura algunas preferencias básicas para personalizar tu experiencia.</p>
+      <form id="onboarding-form">
+        <label for="tamano-hogar">Tamaño del hogar (personas)</label>
+        <input type="number" id="tamano-hogar" min="1" max="10" value="2" />
+
+        <label for="alergias">Alergias o restricciones (ej. gluten, lácteos)</label>
+        <input type="text" id="alergias" placeholder="Separadas por coma (opcional)" />
+
+        <label for="presupuesto-monto">Presupuesto por compra (COP)</label>
+        <input type="number" id="presupuesto-monto" min="0" value="200000" />
+
+        <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Barra superior -->
+  <header class="topbar">
+    <h1>Asistente Inteligente de Cocina</h1>
+    <div class="topbar-info">
+      <span id="topbar-hogar"></span>
+      <span id="topbar-presupuesto"></span>
+    </div>
+  </header>
+
+  <!-- Navegación principal -->
+  <nav class="sidebar" aria-label="Navegación principal">
+    <button class="nav-link active" data-section="dashboard">Dashboard</button>
+    <button class="nav-link" data-section="inventario">Inventario</button>
+    <button class="nav-link" data-section="lista">Lista de compra</button>
+    <button class="nav-link" data-section="menus">Menús</button>
+    <button class="nav-link" data-section="historial">Historial</button>
+    <button class="nav-link" data-section="ajustes">Ajustes</button>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main">
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="section visible" aria-label="Dashboard">
+      <h2>Resumen general</h2>
+
+      <div class="cards-grid">
+        <div class="card">
+          <h3>Productos próximos a vencer (≤ 3 días)</h3>
+          <ul id="lista-proximos-vencer"></ul>
+        </div>
+
+        <div class="card">
+          <h3>Stock bajo</h3>
+          <ul id="lista-stock-bajo"></ul>
+        </div>
+
+        <div class="card">
+          <h3>Gasto estimado de la lista actual</h3>
+          <p id="resumen-gasto-lista">No hay lista generada aún.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Flujos rápidos</h3>
+        <div class="quick-actions">
+          <button class="btn btn-primary" id="btn-ir-lista">Ir a lista sugerida</button>
+          <button class="btn" id="btn-ir-menus">Ver menús sugeridos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section id="inventario" class="section" aria-label="Inventario">
+      <div class="section-header">
+        <h2>Inventario</h2>
+        <div class="inventory-actions">
+          <button class="btn btn-primary" id="btn-agregar-producto">Agregar producto</button>
+          <button class="btn" id="btn-ver-lista-inventario">Vista lista</button>
+          <button class="btn" id="btn-ver-tarjetas-inventario">Vista tarjetas</button>
+        </div>
+      </div>
+
+      <div class="filters-row">
+        <label for="orden-inventario">Ordenar por:</label>
+        <select id="orden-inventario">
+          <option value="nombre">Nombre</option>
+          <option value="caducidad">Fecha de caducidad</option>
+          <option value="cantidad">Cantidad</option>
+          <option value="categoria">Categoría</option>
+        </select>
+      </div>
+
+      <div id="inventario-contenedor" class="inventario-lista"></div>
+    </section>
+
+    <!-- LISTA DE COMPRA -->
+    <section id="lista" class="section" aria-label="Lista de compra">
+      <div class="section-header">
+        <h2>Lista de compra automática</h2>
+        <div class="inventory-actions">
+          <button class="btn btn-primary" id="btn-generar-lista-balance">Generar (Balance)</button>
+          <button class="btn" id="btn-generar-lista-ahorro">Ahorro</button>
+          <button class="btn" id="btn-generar-lista-completo">Completo</button>
+        </div>
+      </div>
+
+      <p id="lista-presupuesto-resumen"></p>
+
+      <ul id="lista-compra-items" class="lista-compra"></ul>
+    </section>
+
+    <!-- MENÚS -->
+    <section id="menus" class="section" aria-label="Menús">
+      <div class="section-header">
+        <h2>Menús rápidos sugeridos</h2>
+      </div>
+      <div id="menus-contenedor" class="cards-grid"></div>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section id="historial" class="section" aria-label="Historial">
+      <div class="section-header">
+        <h2>Historial de compras</h2>
+      </div>
+
+      <div class="filters-row">
+        <label for="filtro-producto-historial">Filtrar por producto:</label>
+        <input type="text" id="filtro-producto-historial" placeholder="Nombre del producto" />
+        <label for="filtro-fecha-historial">Fecha:</label>
+        <input type="date" id="filtro-fecha-historial" />
+        <button class="btn" id="btn-limpiar-filtros-historial">Limpiar filtros</button>
+      </div>
+
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio (COP)</th>
+            <th>Tienda</th>
+          </tr>
+        </thead>
+        <tbody id="historial-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- AJUSTES -->
+    <section id="ajustes" class="section" aria-label="Ajustes">
+      <h2>Ajustes del asistente</h2>
+      <form id="ajustes-form" class="ajustes-form">
+        <label for="ajustes-tamano-hogar">Tamaño del hogar (personas)</label>
+        <input type="number" id="ajustes-tamano-hogar" min="1" max="10" />
+
+        <label for="ajustes-alergias">Alergias o restricciones</label>
+        <input type="text" id="ajustes-alergias" />
+
+        <label for="ajustes-presupuesto">Presupuesto por compra (COP)</label>
+        <input type="number" id="ajustes-presupuesto" min="0" />
+
+        <button type="submit" class="btn btn-primary">Guardar ajustes</button>
+      </form>
+
+      <div class="card">
+        <h3>Simulaciones avanzadas</h3>
+        <div class="quick-actions">
+          <button class="btn" id="btn-simular-ocr">Simular OCR de recibo</button>
+          <button class="btn" id="btn-simular-foto">Simular reconocimiento por foto</button>
+          <button class="btn" id="btn-simular-comparar-precios">Simular comparación de precios</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: formulario producto -->
+  <div class="modal-backdrop hidden" id="modal-producto-backdrop">
+    <div class="modal">
+      <h2 id="modal-producto-titulo">Agregar producto</h2>
+      <form id="form-producto">
+        <input type="hidden" id="producto-id" />
+        <label for="producto-nombre">Nombre</label>
+        <input type="text" id="producto-nombre" required />
+
+        <label for="producto-cantidad">Cantidad</label>
+        <input type="number" id="producto-cantidad" min="0" step="0.1" required />
+
+        <label for="producto-unidad">Unidad</label>
+        <select id="producto-unidad">
+          <option value="unidades">Unidades</option>
+          <option value="g">g</option>
+          <option value="ml">ml</option>
+        </select>
+
+        <label for="producto-fecha-entrada">Fecha de entrada</label>
+        <input type="date" id="producto-fecha-entrada" required />
+
+        <label for="producto-fecha-caducidad">Fecha de caducidad (opcional)</label>
+        <input type="date" id="producto-fecha-caducidad" />
+
+        <label for="producto-categoria">Categoría</label>
+        <input type="text" id="producto-categoria" placeholder="Lácteos, verduras, etc." />
+
+        <label for="producto-nota">Nota</label>
+        <textarea id="producto-nota" rows="2"></textarea>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" id="btn-cancelar-producto">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL genérico para simulaciones -->
+  <div class="modal-backdrop hidden" id="modal-simulacion-backdrop">
+    <div class="modal">
+      <h2 id="modal-simulacion-titulo">Simulación</h2>
+      <pre id="modal-simulacion-contenido" class="pre"></pre>
+      <div class="modal-actions">
+        <button class="btn" id="btn-modal-simulacion-cerrar">Cerrar</button>
+        <button class="btn btn-primary hidden" id="btn-modal-simulacion-aplicar">
+          Aplicar al sistema
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="estaticos/logica.js"></script>
+  <script src="estaticos/app.js"></script>
+</body>
+</html>
