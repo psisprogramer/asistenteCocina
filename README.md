@@ -1,4 +1,4 @@
-#Asistente de Cocina inteligente 🍽️
+##Asistente de Cocina inteligente 🍽️##
 
 
 Asistente inteligente de cocina — MVP frontend para gestionar inventario, generar listas de compra automáticas y sugerir menús según lo que tienes disponible.
